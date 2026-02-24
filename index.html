@@ -315,7 +315,7 @@ document.addEventListener('keydown', function(e) {
   if (key && e.key.toLowerCase() !== key) match = false;
   if (match) {
     e.preventDefault();
-    window.location.href = 'admin.html';
+    window.location.href = 'admin';
   }
 });
 
@@ -328,4 +328,5 @@ loadData();
 setInterval(loadData,5*60*1000);
 </script>
 </body>
+
 </html>
