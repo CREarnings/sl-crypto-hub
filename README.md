@@ -9,7 +9,7 @@ Sri Lanka's #1 crypto airdrop tracking site. Built with pure HTML/CSS/JS — no 
 ```
 cr-earnings/
 ├── assets/           # Site logo - visitors see favicon from here
-    └── icon.ico      # Site icon
+|   └── icon.ico      # Site icon
 ├── index.html        # Public site – visitors see articles here
 ├── admin.html        # Admin panel – only for authorized admins
 ├── site-config.json  # Auto-generated on setup – stores Gist ID (DO NOT edit manually)
