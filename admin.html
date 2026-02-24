@@ -729,10 +729,9 @@ function captureHandler(e) {
   if (e.altKey) keys.push('alt');
   if (e.shiftKey) keys.push('shift');
   if (e.metaKey) keys.push('meta');
+  // Only save when a non‑modifier key is pressed
   if (e.key && !['Control','Alt','Shift','Meta'].includes(e.key)) {
     keys.push(e.key.toLowerCase());
-  }
-  if (keys.length) {
     const shortcut = keys.join('+');
     localStorage.setItem('cr_admin_shortcut', shortcut);
     document.getElementById('shortcutDisplay').value = formatShortcut(shortcut);
@@ -740,6 +739,7 @@ function captureHandler(e) {
     document.removeEventListener('keydown', captureHandler);
     showToast('Shortcut saved!', 'success');
   }
+  // If no main key yet, do nothing (wait for further keys)
 }
 function resetShortcut() {
   localStorage.setItem('cr_admin_shortcut', 'ctrl+alt+a');
@@ -771,4 +771,5 @@ function showToast(msg,type){const t=document.getElementById('toast');t.textCont
 ['articleModal','adModal','adminModal'].forEach(id=>{document.getElementById(id).addEventListener('click',e=>{if(e.target===document.getElementById(id))closeModal(id);});});
 </script>
 </body>
+
 </html>
