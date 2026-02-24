@@ -194,14 +194,18 @@ function applyTheme(){const dark=currentTheme==='dark'||(currentTheme==='system'
 window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change',applyTheme);
 setTheme(currentTheme);
 
-// ══════ Smooth scroll without hash in URL ══════
-document.querySelectorAll('nav a').forEach(link => {
+// ══════ Smooth scroll for all internal hash links without changing URL ══════
+document.querySelectorAll('a[href^="#"]').forEach(link => {
   link.addEventListener('click', (e) => {
     e.preventDefault();
     const targetId = link.getAttribute('href');
-    const targetElement = document.querySelector(targetId);
-    if (targetElement) {
-      targetElement.scrollIntoView({ behavior: 'smooth' });
+    if (targetId === '#') {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } else {
+      const targetElement = document.querySelector(targetId);
+      if (targetElement) {
+        targetElement.scrollIntoView({ behavior: 'smooth' });
+      }
     }
   });
 });
@@ -342,4 +346,5 @@ setInterval(loadData,5*60*1000);
 </body>
 
 </html>
+
 
