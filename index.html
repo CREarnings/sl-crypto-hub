@@ -420,24 +420,49 @@ async function getAnalyticsToken(){
   return null;
 }
 
+let _analyticsProxy=null;
+async function getAnalyticsProxy(){
+  if(_analyticsProxy)return _analyticsProxy;
+  try{
+    const r=await fetch('site-config.json?t='+Date.now(),{cache:'no-store'});
+    if(r.ok){const d=await r.json();if(d&&d.analyticsProxy){_analyticsProxy=d.analyticsProxy;return _analyticsProxy;}}
+  }catch(e){}
+  return null;
+}
+
 async function safeGistPatch(updateFn){
   try{
-    const token=await getAnalyticsToken();
-    if(!token)return;
-    const gistId=await getGistId();
-    if(!gistId)return;
-    const headers={'Accept':'application/vnd.github.v3+json','Authorization':'token '+token};
-    const r=await fetch('https://api.github.com/gists/'+gistId,{headers});
-    if(!r.ok)return;
-    const gistData=await r.json();
-    const raw=(gistData.files&&gistData.files['cr-data.json'])?gistData.files['cr-data.json'].content:'{}';
-    const db=JSON.parse(raw);
-    updateFn(db);
-    await fetch('https://api.github.com/gists/'+gistId,{
-      method:'PATCH',
-      headers:{...headers,'Content-Type':'application/json'},
-      body:JSON.stringify({files:{'cr-data.json':{content:JSON.stringify(db)}}})
-    });
+    const proxy=await getAnalyticsProxy();
+    if(proxy){
+      const r=await fetch(proxy,{method:'GET'});
+      if(!r.ok)return;
+      const gistData=await r.json();
+      const raw=(gistData.files&&gistData.files['cr-data.json'])?gistData.files['cr-data.json'].content:'{}';
+      const db=JSON.parse(raw);
+      updateFn(db);
+      await fetch(proxy,{
+        method:'PATCH',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({files:{'cr-data.json':{content:JSON.stringify(db)}}})
+      });
+    } else {
+      const token=await getAnalyticsToken();
+      if(!token)return;
+      const gistId=await getGistId();
+      if(!gistId)return;
+      const headers={'Accept':'application/vnd.github.v3+json','Authorization':'token '+token};
+      const r=await fetch('https://api.github.com/gists/'+gistId,{headers});
+      if(!r.ok)return;
+      const gistData=await r.json();
+      const raw=(gistData.files&&gistData.files['cr-data.json'])?gistData.files['cr-data.json'].content:'{}';
+      const db=JSON.parse(raw);
+      updateFn(db);
+      await fetch('https://api.github.com/gists/'+gistId,{
+        method:'PATCH',
+        headers:{...headers,'Content-Type':'application/json'},
+        body:JSON.stringify({files:{'cr-data.json':{content:JSON.stringify(db)}}})
+      });
+    }
   }catch(e){/* silent */}
 }
 
