@@ -14,10 +14,7 @@
     html{scroll-behavior:smooth;}
     body{font-family:'Exo 2',sans-serif;background-color:var(--cr-dark);color:var(--cr-text);transition:background-color .3s,color .3s;min-height:100vh;}
     .site-wrapper{display:grid;grid-template-columns:160px 1fr 160px;grid-template-rows:auto 1fr auto;min-height:100vh;}
-    @media(max-width:900px){
-      .site-wrapper{grid-template-columns:1fr;}
-      .ad-left,.ad-right{display:none!important;}
-    }
+    @media(max-width:900px){.site-wrapper{grid-template-columns:1fr;}.ad-left,.ad-right{display:none!important;}}
     header{grid-column:1/-1;background:var(--cr-card);border-bottom:2px solid var(--cr-red);box-shadow:0 0 20px var(--cr-glow);position:sticky;top:0;z-index:100;padding:0 1rem;display:flex;align-items:center;justify-content:space-between;height:64px;}
     .logo{font-family:'Orbitron',monospace;font-weight:900;font-size:1.4rem;color:var(--cr-red);text-shadow:0 0 10px var(--cr-glow);text-decoration:none;letter-spacing:2px;}
     .logo span{color:var(--cr-text);}
@@ -27,22 +24,19 @@
     .header-right{display:flex;gap:.5rem;align-items:center;}
     .theme-btn{background:var(--cr-border);border:1px solid var(--cr-border);color:var(--cr-text);cursor:pointer;border-radius:6px;padding:4px 8px;font-size:.7rem;font-family:'Exo 2',sans-serif;transition:all .2s;}
     .theme-btn:hover,.theme-btn.active{background:var(--cr-red);border-color:var(--cr-red);color:#fff;}
-
-    /* Hamburger — hidden on desktop */
+    /* Hamburger */
     .hamburger{display:none;flex-direction:column;justify-content:center;align-items:center;gap:5px;width:38px;height:38px;background:var(--cr-border);border:1px solid var(--cr-border);border-radius:6px;cursor:pointer;flex-shrink:0;padding:0;}
     .hamburger span{display:block;width:18px;height:2px;background:var(--cr-text);border-radius:2px;transition:all .25s;}
     .hamburger.open span:nth-child(1){transform:translateY(7px) rotate(45deg);}
     .hamburger.open span:nth-child(2){opacity:0;transform:scaleX(0);}
     .hamburger.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg);}
-
-    /* Mobile nav drawer — hidden on desktop */
+    /* Mobile nav drawer */
     .mobile-nav{display:none;position:fixed;top:56px;left:0;right:0;background:var(--cr-card);border-bottom:2px solid var(--cr-red);box-shadow:0 8px 24px rgba(0,0,0,.75);z-index:98;flex-direction:column;padding:.5rem 1rem 1rem;}
     .mobile-nav.open{display:flex;}
     .mobile-nav a{font-family:'Orbitron',monospace;font-size:.8rem;font-weight:700;letter-spacing:1px;color:var(--cr-muted);text-decoration:none;text-transform:uppercase;padding:.85rem 0;border-bottom:1px solid var(--cr-border);transition:color .2s;}
     .mobile-nav a:hover{color:var(--cr-red);}
     .mobile-theme-row{display:flex;gap:.5rem;padding-top:.85rem;}
     .mobile-theme-row .theme-btn{flex:1;text-align:center;padding:8px 4px;font-size:.75rem;}
-
     .ad-left,.ad-right{background:var(--cr-card);border-right:1px solid var(--cr-border);position:sticky;top:64px;height:calc(100vh - 64px);overflow:hidden;display:flex;flex-direction:column;}
     .ad-right{border-right:none;border-left:1px solid var(--cr-border);}
     .ad-slot{position:relative;width:100%;height:100%;overflow:hidden;}
@@ -117,8 +111,6 @@
     @keyframes spin{to{transform:rotate(360deg);}}
 
     /* ══════ RESPONSIVE ══════ */
-
-    /* Tablet (601–900px) */
     @media(min-width:601px) and (max-width:900px){
       header{height:60px;}
       main{padding:1.5rem 1rem 85px;}
@@ -127,16 +119,12 @@
       .footer-inner{grid-template-columns:repeat(2,1fr);}
       .ad-bottom{height:65px;}
     }
-
-    /* Mobile (≤600px) */
     @media(max-width:600px){
       header{padding:0 .75rem;height:56px;}
       .logo{font-size:1.1rem;letter-spacing:1px;}
-      /* Hide desktop nav & theme buttons; show hamburger */
       nav{display:none;}
       .header-right{display:none;}
       .hamburger{display:flex;}
-      /* Main */
       main{padding:1rem .75rem 80px;}
       .hero{padding:2.5rem .75rem 2rem;}
       .hero h1{font-size:clamp(1.5rem,8vw,2.2rem);}
@@ -148,7 +136,6 @@
       .card-body{padding:.55rem .65rem .7rem;}
       .card-title{font-size:.72rem;}
       .card-date{font-size:.62rem;}
-      /* Popup */
       .popup-overlay{padding:.5rem;}
       .popup-box{border-radius:12px;max-height:96vh;}
       .popup-img{height:170px;}
@@ -157,24 +144,18 @@
       .popup-title{font-size:.95rem;}
       .popup-desc{font-size:.85rem;}
       .popup-video iframe{height:190px;}
-      /* Bottom ad */
       .ad-bottom{height:58px;gap:.4rem;padding:0 .5rem;}
       .bottom-ad-item{max-width:none;flex:1;}
       .bottom-ad-item img{height:38px;width:38px;}
       .bottom-ad-text{font-size:.62rem;}
       .bottom-ad-placeholder{font-size:.65rem;letter-spacing:1px;}
-      /* Footer */
       footer{padding:2rem 1rem 80px;}
       .footer-inner{grid-template-columns:1fr;gap:1.25rem;}
-      /* Pagination */
       .pagination button{padding:7px 12px;font-size:.65rem;}
     }
-
-    /* Very small (≤380px) */
     @media(max-width:380px){
       .hero h1{font-size:clamp(1.25rem,9vw,1.7rem);}
       .card-title{font-size:.68rem;}
-      .card-body{padding:.5rem .55rem .6rem;}
     }
   </style>
 </head>
@@ -192,13 +173,11 @@
       <button class="theme-btn" id="btn-system" onclick="setTheme('system')">⚙️</button>
       <button class="theme-btn" id="btn-light" onclick="setTheme('light')">☀️</button>
     </div>
-    <!-- Hamburger — mobile only -->
     <button class="hamburger" id="hamburgerBtn" onclick="toggleMobileNav()" aria-label="Open menu">
       <span></span><span></span><span></span>
     </button>
   </header>
 
-  <!-- Mobile nav drawer -->
   <div class="mobile-nav" id="mobileNav">
     <a href="#top" onclick="closeMobileNav()">Home</a>
     <a href="#articles" onclick="closeMobileNav()">Articles</a>
@@ -296,7 +275,6 @@ function closeMobileNav(){
   document.getElementById('hamburgerBtn').classList.remove('open');
   document.body.style.overflow='';
 }
-// Close when tapping outside
 document.addEventListener('click',function(e){
   const nav=document.getElementById('mobileNav');
   const btn=document.getElementById('hamburgerBtn');
@@ -314,19 +292,13 @@ function applyTheme(){const dark=currentTheme==='dark'||(currentTheme==='system'
 window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change',applyTheme);
 setTheme(currentTheme);
 
-// ══════ Smooth scroll for all internal hash links without changing URL ══════
+// ══════ Smooth scroll ══════
 document.querySelectorAll('a[href^="#"]').forEach(link => {
   link.addEventListener('click', (e) => {
     e.preventDefault();
     const targetId = link.getAttribute('href');
-    if (targetId === '#') {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    } else {
-      const targetElement = document.querySelector(targetId);
-      if (targetElement) {
-        targetElement.scrollIntoView({ behavior: 'smooth' });
-      }
-    }
+    if (targetId === '#') { window.scrollTo({ top: 0, behavior: 'smooth' }); }
+    else { const el = document.querySelector(targetId); if (el) el.scrollIntoView({ behavior: 'smooth' }); }
   });
 });
 
@@ -335,24 +307,15 @@ let allArticles=[],allAds={left:[],right:[],bottom:[]},currentPage=1;
 const PER_PAGE=10;
 
 async function getGistId(){
-  try{
-    const r=await fetch('site-config.json?t='+Date.now(),{cache:'no-store'});
-    if(r.ok){const d=await r.json();if(d&&d.gistId)return d.gistId;}
-  }catch(e){}
-  try{
-    const c=JSON.parse(localStorage.getItem('cr_gist_config')||'null');
-    if(c&&c.gistId)return c.gistId;
-  }catch(e){}
+  try{const r=await fetch('site-config.json?t='+Date.now(),{cache:'no-store'});if(r.ok){const d=await r.json();if(d&&d.gistId)return d.gistId;}}catch(e){}
+  try{const c=JSON.parse(localStorage.getItem('cr_gist_config')||'null');if(c&&c.gistId)return c.gistId;}catch(e){}
   return null;
 }
 
 async function loadData(){
   const loadMsg=document.getElementById('loadingMsg');
   const gistId=await getGistId();
-  if(!gistId){
-    loadMsg.innerHTML='<span style="color:var(--cr-muted);font-family:Orbitron,monospace;font-size:.8rem">⚙️ Site not configured yet.</span>';
-    return;
-  }
+  if(!gistId){loadMsg.innerHTML='<span style="color:var(--cr-muted);font-family:Orbitron,monospace;font-size:.8rem">⚙️ Site not configured yet.</span>';return;}
   try{
     const r=await fetch('https://api.github.com/gists/'+gistId,{headers:{'Accept':'application/vnd.github.v3+json'}});
     if(!r.ok)throw new Error('HTTP '+r.status);
@@ -373,13 +336,11 @@ async function loadData(){
 // ══════ ARTICLES ══════
 function renderArticles(){
   const now=new Date();
-  const visible=allArticles
-    .filter(a=>{
-      if(a.status==='draft')return false;
-      if(a.status==='scheduled')return a.scheduledAt&&new Date(a.scheduledAt)<=now;
-      return a.published!==false;
-    })
-    .sort((a,b)=>new Date(b.date)-new Date(a.date));
+  const visible=allArticles.filter(a=>{
+    if(a.status==='draft')return false;
+    if(a.status==='scheduled')return a.scheduledAt&&new Date(a.scheduledAt)<=now;
+    return a.published!==false;
+  }).sort((a,b)=>new Date(b.date)-new Date(a.date));
   const grid=document.getElementById('cardsGrid'),pag=document.getElementById('pagination'),empty=document.getElementById('emptyState');
   if(!visible.length){grid.innerHTML='';pag.innerHTML='';empty.style.display='block';return;}
   empty.style.display='none';
@@ -404,17 +365,17 @@ function openPopup(id){
   const imgHtml=item.image?`<img class="popup-img" src="${esc(item.image)}" onerror="this.outerHTML='<div class=popup-img-placeholder>🪂</div>'">`:'<div class="popup-img-placeholder">🪂</div>';
   let vid='';
   if(item.ytVideoId){const y=ytId(item.ytVideoId);if(y)vid=`<div class="popup-video"><iframe src="https://www.youtube.com/embed/${y}" frameborder="0" allowfullscreen></iframe><a href="https://www.youtube.com/watch?v=${y}" target="_blank" class="popup-yt-btn">▶ Watch on YouTube</a></div>`;}
-  let refHtml = '';
-  if (item.refLinks && item.refLinks.length) {
-    refHtml = '<div class="ref-links"><div class="ref-links-title">🔗 Referral Links</div>';
-    item.refLinks.forEach(r => {
-      refHtml += `<a href="${esc(r.url)}" target="_blank" class="popup-yt-btn" style="margin-right:8px;margin-bottom:8px;">${esc(r.name || 'Link')}</a>`;
-    });
-    refHtml += '</div>';
+  let refHtml='';
+  if(item.refLinks&&item.refLinks.length){
+    refHtml='<div class="ref-links"><div class="ref-links-title">🔗 Referral Links</div>';
+    item.refLinks.forEach(r=>{refHtml+=`<a href="${esc(r.url)}" target="_blank" class="popup-yt-btn" style="margin-right:8px;margin-bottom:8px;">${esc(r.name||'Link')}</a>`;});
+    refHtml+='</div>';
   }
   document.getElementById('popupInner').innerHTML=`${imgHtml}<div class="popup-content"><div class="popup-title">${esc(item.title)}</div><div class="popup-meta">Posted: ${fmtDate(item.date)}</div><div class="popup-desc">${esc(item.description)}</div>${refHtml}${vid}</div>`;
   document.getElementById('popupOverlay').classList.add('open');
   document.body.style.overflow='hidden';
+  // Track click in background — fire-and-forget, never blocks popup
+  safeTrackClick(id);
 }
 function closePopup(){document.getElementById('popupOverlay').classList.remove('open');document.body.style.overflow='';}
 function closePopupIfOutside(e){if(e.target===document.getElementById('popupOverlay'))closePopup();}
@@ -435,6 +396,70 @@ function renderBottom(list){
   c.innerHTML=list.slice(0,4).map(a=>`<a class="bottom-ad-item" href="${esc(a.link||'#')}" target="_blank">${a.image?`<img src="${esc(a.image)}" alt="ad"/>`:''}${a.title?`<div class="bottom-ad-text"><strong>${esc(a.title)}</strong><small>${esc(a.subtitle||'Sponsored')}</small></div>`:''}</a>`).join('');
 }
 
+// ══════ ANALYTICS ══════
+// Safe: only writes if token available; always fetches fresh data first to prevent overwriting
+async function safeGistPatch(updateFn){
+  try{
+    const cfg=JSON.parse(localStorage.getItem('cr_gist_config')||'null');
+    const token=cfg&&cfg.token;
+    if(!token)return;
+    const gistId=await getGistId();
+    if(!gistId)return;
+    const headers={'Accept':'application/vnd.github.v3+json','Authorization':'token '+token};
+    const r=await fetch('https://api.github.com/gists/'+gistId,{headers});
+    if(!r.ok)return;
+    const gistData=await r.json();
+    const raw=(gistData.files&&gistData.files['cr-data.json'])?gistData.files['cr-data.json'].content:'{}';
+    const db=JSON.parse(raw);
+    updateFn(db);
+    await fetch('https://api.github.com/gists/'+gistId,{method:'PATCH',headers:{...headers,'Content-Type':'application/json'},body:JSON.stringify({files:{'cr-data.json':{content:JSON.stringify(db)}}})});
+  }catch(e){/* silent */}
+}
+
+function safeTrackClick(articleId){
+  setTimeout(()=>safeGistPatch(db=>{
+    if(!db.analytics)db.analytics={};
+    if(!db.analytics.topArticles)db.analytics.topArticles={};
+    db.analytics.topArticles[articleId]=(db.analytics.topArticles[articleId]||0)+1;
+  }),2000);
+}
+
+// Page visit tracking — runs 5s after load to avoid racing with loadData()
+setTimeout(()=>safeGistPatch(db=>{
+  const ua=navigator.userAgent;
+  let device='desktop';
+  if(/Mobi|Android|iPhone|iPad/i.test(ua))device=/iPad|Tablet/i.test(ua)?'tablet':'mobile';
+  const today=new Date().toISOString().slice(0,10);
+  const hour=new Date().getHours();
+  const vKey='cr_v_'+today;
+  const isUnique=!localStorage.getItem(vKey);
+  if(isUnique)localStorage.setItem(vKey,'1');
+  let source='direct';
+  const ref=document.referrer;
+  if(ref){
+    if(/google|bing|yahoo|duckduckgo/i.test(ref))source='search';
+    else if(/youtube/i.test(ref))source='youtube';
+    else if(/t\.co|twitter|x\.com/i.test(ref))source='twitter';
+    else if(/facebook|fb\.com/i.test(ref))source='facebook';
+    else source='referral';
+  }
+  if(!db.analytics)db.analytics={};
+  const a=db.analytics;
+  if(!a.daily)a.daily={};
+  if(!a.daily[today])a.daily[today]={views:0,unique:0};
+  a.daily[today].views=(a.daily[today].views||0)+1;
+  if(isUnique){a.daily[today].unique=(a.daily[today].unique||0)+1;a.totalUnique=(a.totalUnique||0)+1;}
+  a.totalViews=(a.totalViews||0)+1;
+  if(!a.devices)a.devices={desktop:0,mobile:0,tablet:0};
+  a.devices[device]=(a.devices[device]||0)+1;
+  if(!a.sources)a.sources={};
+  a.sources[source]=(a.sources[source]||0)+1;
+  if(!a.hourly||a.hourly.length!==24)a.hourly=Array(24).fill(0);
+  a.hourly[hour]=(a.hourly[hour]||0)+1;
+  const days=Object.keys(a.daily).sort();
+  if(days.length>30)days.slice(0,days.length-30).forEach(d=>delete a.daily[d]);
+}),5000);
+
 // ══════ ADMIN SHORTCUT ══════
 document.addEventListener('keydown', function(e) {
   const saved = localStorage.getItem('cr_admin_shortcut') || 'ctrl+alt+a';
@@ -446,10 +471,7 @@ document.addEventListener('keydown', function(e) {
   if (parts.includes('meta') && !e.metaKey) match = false;
   const key = parts.filter(p => !['ctrl','alt','shift','meta'].includes(p)).pop() || '';
   if (key && e.key.toLowerCase() !== key) match = false;
-  if (match) {
-    e.preventDefault();
-    window.location.href = 'admin';
-  }
+  if (match) { e.preventDefault(); window.location.href = 'admin'; }
 });
 
 // ══════ UTILS ══════

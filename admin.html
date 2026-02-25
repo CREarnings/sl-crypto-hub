@@ -55,54 +55,6 @@
     .ref-row input{flex:1;}
     .ref-row button{background:transparent;border:1px solid var(--cr-border);color:var(--cr-muted);width:32px;height:32px;border-radius:6px;cursor:pointer;font-size:1rem;transition:all .2s;}
     .ref-row button:hover{border-color:var(--cr-red);color:var(--cr-red);}
-
-    /* ── Mobile & Tablet Responsive ── */
-    @media(max-width:600px){
-      /* Setup & Login screens */
-      #setupScreen,#loginScreen{padding:.75rem;}
-      .logo{font-size:1.1rem;}
-      .panel{padding:1rem;}
-      .info-box,.setup-box{font-size:.78rem;padding:.75rem;}
-      /* Dashboard header */
-      #adminDashboard>header{padding:0 .75rem;height:auto;min-height:56px;flex-wrap:wrap;gap:.5rem;padding-top:.5rem;padding-bottom:.5rem;}
-      #adminDashboard>header .logo{font-size:1rem;}
-      #adminDashboard>header>div:last-child{gap:.35rem;flex-wrap:wrap;}
-      #adminDashboard>header>div:last-child #loggedAsLabel{font-size:.65rem;width:100%;text-align:right;}
-      .btn-ghost,.btn-red{padding:6px 12px;font-size:.78rem;}
-      /* Tab bar */
-      #adminDashboard>div[style*="border-bottom"]{padding:0 .5rem;}
-      .tab-btn{font-size:.6rem;padding:8px 10px;letter-spacing:.5px;}
-      /* Content */
-      #adminDashboard>div[style*="max-width"]{padding:1rem .75rem 3rem;}
-      .article-row{gap:.6rem;}
-      .article-row img,.thumb-placeholder{width:40px;height:40px;}
-      .article-row>div[style*="flex:1"]>div:first-child{font-size:.82rem;}
-      /* Modals */
-      .modal-backdrop{padding:1rem .5rem;}
-      .modal-box{padding:1.25rem;border-radius:10px;}
-      .section-title{font-size:.85rem;}
-      /* Admin rows */
-      .admin-row{gap:.6rem;}
-      .admin-row>div[style*="flex:1"]>div:first-child{font-size:.82rem;}
-      /* Ad rows */
-      .ad-row{gap:.5rem;}
-      .ad-row>div[style*="flex:1"]>div{font-size:.78rem;}
-      /* Toast */
-      .toast{bottom:1rem;right:.75rem;left:.75rem;max-width:none;}
-      /* Ref links */
-      .ref-row{flex-wrap:wrap;}
-      .ref-row input{min-width:0;}
-    }
-    @media(max-width:400px){
-      .tab-btn{font-size:.55rem;padding:8px 8px;}
-      .article-row{flex-wrap:wrap;}
-      .article-row>div[style*="display:flex;gap:6px"]{width:100%;justify-content:flex-end;}
-    }
-    @media(min-width:601px) and (max-width:900px){
-      #adminDashboard>header{padding:0 1rem;}
-      #adminDashboard>div[style*="max-width"]{padding:1.5rem 1rem 3rem;}
-      .modal-backdrop{padding:1.5rem .75rem;}
-    }
   </style>
 </head>
 <body>
@@ -152,18 +104,18 @@
     <div class="panel">
       <div class="field"><label>Username</label><input type="text" id="loginUsername" autocomplete="off" /></div>
       <div class="field"><label>Password</label><input type="password" id="loginPassword" /></div>
-      <div id="loginTokenWrap" style="display:none;">
-        <div class="info-box" style="font-size:.78rem;margin-bottom:.75rem;">
-          First time on this device – enter your GitHub token so you can write articles.<br/>
-          <small style="opacity:.7;">Your token is only saved on this browser, never shared.</small>
+      <div id="loginTokenWrap">
+        <div class="field">
+          <label style="display:flex;align-items:center;justify-content:space-between;">
+            <span>GitHub Token <span id="tokenRequiredBadge" style="display:none;color:#ff4444;font-size:.7rem;font-weight:700;">● Required to save changes</span></span>
+            <span id="tokenSavedBadge" style="color:#00cc44;font-size:.7rem;display:none;">✔ Token saved</span>
+          </label>
+          <input type="password" id="loginToken" placeholder="ghp_xxxxxxxxxxxx" />
+          <div style="font-size:.68rem;color:var(--cr-muted);margin-top:4px;">Needed to add/edit content. Saved in this browser only.</div>
         </div>
-        <div class="field"><label>GitHub Token (ghp_...)</label><input type="password" id="loginToken" placeholder="ghp_xxxxxxxxxxxx" /></div>
       </div>
       <div id="loginError" style="color:#ff4444;font-size:.8rem;margin-bottom:.75rem;display:none;"></div>
       <button class="btn-red" style="width:100%;" id="loginBtn" onclick="doLogin()">Login</button>
-      <p style="text-align:center;margin-top:.75rem;">
-        <button onclick="toggleTokenField()" style="background:none;border:none;color:var(--cr-muted);font-size:.72rem;cursor:pointer;text-decoration:underline;">New device? Enter token</button>
-      </p>
     </div>
     <p style="text-align:center;font-size:.7rem;color:var(--cr-muted);margin-top:1rem;">
       <a href="./" style="color:var(--cr-muted);">← Back to Site</a>
@@ -189,6 +141,7 @@
     <button class="tab-btn active" id="tab-articles" onclick="switchTab('articles')">📰 Articles</button>
     <button class="tab-btn" id="tab-ads" onclick="switchTab('ads')">📢 Ads</button>
     <button class="tab-btn" id="tab-admins" onclick="switchTab('admins')">👥 Admins</button>
+    <button class="tab-btn" id="tab-stats" onclick="switchTab('stats')">📊 Statistics</button>
     <button class="tab-btn" id="tab-settings" onclick="switchTab('settings')">⚙️ Settings</button>
   </div>
 
@@ -232,6 +185,51 @@
           <button class="btn-red" onclick="openAdminForm()">+ Add Admin</button>
         </div>
         <div id="adminsList"></div>
+      </div>
+    </div>
+
+
+    <div id="tabStats" style="display:none;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;flex-wrap:wrap;gap:1rem;">
+        <div class="section-title" style="margin:0;">Site Statistics</div>
+        <div style="display:flex;gap:.5rem;align-items:center;">
+          <select id="statsDays" onchange="renderStats()" style="background:#1a1a1a;border:1px solid var(--cr-border);color:var(--cr-text);border-radius:6px;padding:6px 10px;font-size:.8rem;font-family:'Exo 2',sans-serif;">
+            <option value="7">Last 7 days</option>
+            <option value="14">Last 14 days</option>
+            <option value="30" selected>Last 30 days</option>
+          </select>
+          <button class="btn-ghost" style="font-size:.75rem;" onclick="syncFromGist(false).then(renderStats)">🔄 Refresh</button>
+        </div>
+      </div>
+      <div id="statsKpis" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:1rem;margin-bottom:1.5rem;"></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem;">
+        <div class="panel">
+          <div style="font-family:'Orbitron',monospace;font-size:.75rem;color:var(--cr-red);letter-spacing:1px;margin-bottom:.75rem;">DAILY TRAFFIC</div>
+          <canvas id="chartDaily" width="460" height="180" style="width:100%;height:180px;display:block;max-height:180px;"></canvas>
+        </div>
+        <div class="panel">
+          <div style="font-family:'Orbitron',monospace;font-size:.75rem;color:var(--cr-red);letter-spacing:1px;margin-bottom:.75rem;">TRAFFIC BY HOUR</div>
+          <canvas id="chartHourly" width="460" height="180" style="width:100%;height:180px;display:block;max-height:180px;"></canvas>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem;margin-bottom:1rem;">
+        <div class="panel">
+          <div style="font-family:'Orbitron',monospace;font-size:.75rem;color:var(--cr-red);letter-spacing:1px;margin-bottom:.75rem;">DEVICES</div>
+          <canvas id="chartDevices" width="200" height="150" style="display:block;margin:0 auto;max-height:150px;"></canvas>
+          <div id="deviceLegend" style="margin-top:.75rem;font-size:.75rem;"></div>
+        </div>
+        <div class="panel">
+          <div style="font-family:'Orbitron',monospace;font-size:.75rem;color:var(--cr-red);letter-spacing:1px;margin-bottom:.75rem;">TRAFFIC SOURCES</div>
+          <canvas id="chartSources" width="200" height="150" style="display:block;margin:0 auto;max-height:150px;"></canvas>
+          <div id="sourceLegend" style="margin-top:.75rem;font-size:.75rem;"></div>
+        </div>
+        <div class="panel">
+          <div style="font-family:'Orbitron',monospace;font-size:.75rem;color:var(--cr-red);letter-spacing:1px;margin-bottom:.75rem;">TOP AIRDROPS</div>
+          <div id="topArticlesStats" style="font-size:.8rem;"></div>
+        </div>
+      </div>
+      <div class="info-box" style="font-size:.75rem;">
+        📌 Analytics stored in your GitHub Gist. Tracking only writes when a GitHub token is present in the browser — visit the site while logged into admin to record data.
       </div>
     </div>
 
@@ -519,9 +517,15 @@ async function doLogin(){
   const btn=document.getElementById('loginBtn');btn.innerHTML='Checking...<span class="spinner"></span>';btn.disabled=true;
 
   const enteredToken=(document.getElementById('loginToken').value||'').trim();
+  // Always try to save token if entered; also get gistId from site-config.json if not in localStorage
   if(enteredToken){
     const gId=await getGistId();
-    if(gId)saveLocalCfg({gistId:gId,token:enteredToken});
+    if(gId){saveLocalCfg({gistId:gId,token:enteredToken});}
+    else{
+      // gistId not found anywhere yet – store token temporarily; it will merge after fetchGist resolves gistId
+      const existing=getLocalCfg();
+      saveLocalCfg(Object.assign({},existing,{token:enteredToken}));
+    }
   }
 
   const data=await fetchGist();
@@ -532,12 +536,36 @@ async function doLogin(){
   if(!admin){err(errEl,'Invalid username or password.');document.getElementById('loginPassword').value='';btn.textContent='Login';btn.disabled=false;return;}
 
   saveSession({id:admin.id,username:admin.username,isSuperAdmin:!!admin.isSuperAdmin});
+  // Show token badge
+  const tSaved=document.getElementById('tokenSavedBadge');
+  const tReq=document.getElementById('tokenRequiredBadge');
+  if(tSaved)tSaved.style.display=getToken()?'':'none';
   await showDashboard();
   btn.textContent='Login';btn.disabled=false;
 }
 document.getElementById('loginPassword').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();});
 document.getElementById('loginUsername').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();});
+
+// Show token status badge on page load
+(function checkTokenBadge(){
+  const saved=getToken();
+  const savedBadge=document.getElementById('tokenSavedBadge');
+  const reqBadge=document.getElementById('tokenRequiredBadge');
+  if(saved&&savedBadge)savedBadge.style.display='';
+})();
 function doLogout(){clearSession();location.reload();}
+
+async function saveInlineToken(){
+  const t=(document.getElementById('inlineToken').value||'').trim();
+  if(!t){showToast('Enter your GitHub token first.','error');return;}
+  const gId=await getGistId();
+  if(!gId){showToast('Cannot find Gist ID.','error');return;}
+  saveLocalCfg({gistId:gId,token:t});
+  const banner=document.getElementById('tokenBanner');
+  if(banner)banner.remove();
+  setSyncStatus('ok','● Synced');
+  showToast('Token saved! You can now write data.','success');
+}
 
 // ══════ DASHBOARD ══════
 async function showDashboard(){
@@ -545,7 +573,21 @@ async function showDashboard(){
   document.getElementById('loggedAsLabel').textContent='👤 '+ME.username+(ME.isSuperAdmin?' (Super Admin)':'');
   document.getElementById('newUsername').value=ME.username;
   if(!ME.isSuperAdmin)document.getElementById('tab-admins').style.display='none';
-  if(!getToken())setSyncStatus('err','⚠ Read-only – enter token to write');
+  if(!getToken()){
+    setSyncStatus('err','⚠ No write token');
+    // Show inline token entry banner
+    if(!document.getElementById('tokenBanner')){
+      const banner=document.createElement('div');
+      banner.id='tokenBanner';
+      banner.style.cssText='background:rgba(255,0,0,.08);border-bottom:1px solid var(--cr-red);padding:.6rem 1.5rem;display:flex;align-items:center;gap:.75rem;flex-wrap:wrap;font-size:.8rem;';
+      banner.innerHTML=`<span style="color:#ff4444;font-weight:700;">⚠ No GitHub token found.</span>
+        <span style="color:var(--cr-muted);">You cannot save until you enter your token.</span>
+        <input type="password" id="inlineToken" placeholder="ghp_xxxxxxxxxxxx" style="background:#1a1a1a;border:1px solid var(--cr-border);color:var(--cr-text);border-radius:6px;padding:5px 10px;font-size:.8rem;flex:1;min-width:200px;max-width:300px;font-family:'Exo 2',sans-serif;" />
+        <button onclick="saveInlineToken()" style="background:var(--cr-red);color:#fff;border:none;padding:6px 14px;border-radius:6px;cursor:pointer;font-size:.8rem;font-weight:700;font-family:'Exo 2',sans-serif;">Save Token</button>`;
+      const header=document.querySelector('#adminDashboard>header');
+      if(header)header.insertAdjacentElement('afterend',banner);
+    }
+  }
   await syncFromGist(false);
 
   // Load saved shortcut
@@ -555,12 +597,13 @@ async function showDashboard(){
 
 // ══════ TABS ══════
 function switchTab(tab){
-  ['articles','ads','admins','settings'].forEach(t=>{
+  ['articles','ads','admins','stats','settings'].forEach(t=>{
     const p=document.getElementById('tab'+t[0].toUpperCase()+t.slice(1));if(p)p.style.display=t===tab?'block':'none';
     const b=document.getElementById('tab-'+t);if(b)b.classList.toggle('active',t===tab);
   });
   if(tab==='ads')renderAllAdLists();
   if(tab==='admins')renderAdminsList();
+  if(tab==='stats')renderStats();
 }
 
 // ══════ ARTICLES ══════
@@ -816,6 +859,213 @@ function esc(s){if(!s)return'';return String(s).replace(/&/g,'&amp;').replace(/<
 function fmtDate(d){if(!d)return'';return new Date(d).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'});}
 let _tt;
 function showToast(msg,type){const t=document.getElementById('toast');t.textContent=msg;t.className='toast show'+(type?' '+type:'');clearTimeout(_tt);_tt=setTimeout(()=>t.classList.remove('show'),3500);}
+
+// ══════ STATS — native Canvas 2D, no external library ══════
+
+function drawBarChart(canvasId, labels, datasets, legend){
+  const cv=document.getElementById(canvasId);
+  if(!cv)return;
+  // Use fixed pixel size — never changes, never loops
+  const W=cv.width||460, H=cv.height||180;
+  cv.style.height=H+'px';
+  const ctx=cv.getContext('2d');
+  ctx.clearRect(0,0,W,H);
+  const PL=34,PR=8,PT=20,PB=28;
+  const cW=W-PL-PR, cH=H-PT-PB;
+  const allV=datasets.flatMap(d=>d.data);
+  const mx=Math.max(...allV,1);
+  const n=labels.length;
+  const gW=cW/n;
+  const bW=Math.max(2,gW/datasets.length-2);
+  // grid
+  for(let i=0;i<=4;i++){
+    const y=PT+cH-(i/4)*cH;
+    ctx.strokeStyle='#222';ctx.lineWidth=1;
+    ctx.beginPath();ctx.moveTo(PL,y);ctx.lineTo(W-PR,y);ctx.stroke();
+    ctx.fillStyle='#555';ctx.font='9px sans-serif';ctx.textAlign='right';
+    ctx.fillText(Math.round(mx*i/4),PL-3,y+3);
+  }
+  // bars
+  datasets.forEach((ds,di)=>{
+    ds.data.forEach((v,xi)=>{
+      const bh=(v/mx)*cH;
+      const x=PL+xi*gW+di*(bW+2)+2;
+      const y=PT+cH-bh;
+      ctx.fillStyle=ds.color;
+      ctx.beginPath();
+      if(ctx.roundRect)ctx.roundRect(x,y,bW,Math.max(bh,1),2);
+      else ctx.rect(x,y,bW,Math.max(bh,1));
+      ctx.fill();
+    });
+  });
+  // x labels
+  ctx.fillStyle='#555';ctx.font='9px sans-serif';ctx.textAlign='center';
+  const ev=Math.ceil(n/10);
+  labels.forEach((l,i)=>{
+    if(i%ev!==0&&i!==n-1)return;
+    ctx.fillText(l,PL+i*gW+gW/2,H-5);
+  });
+  // legend
+  if(legend){
+    let lx=PL;
+    legend.forEach((txt,i)=>{
+      ctx.fillStyle=datasets[i].color;ctx.fillRect(lx,4,10,8);
+      ctx.fillStyle='#888';ctx.font='9px sans-serif';ctx.textAlign='left';
+      ctx.fillText(txt,lx+13,11);
+      lx+=ctx.measureText(txt).width+28;
+    });
+  }
+}
+
+function drawLineChart(canvasId, labels, data, color){
+  const cv=document.getElementById(canvasId);
+  if(!cv)return;
+  const W=cv.width||460, H=cv.height||180;
+  cv.style.height=H+'px';
+  const ctx=cv.getContext('2d');
+  ctx.clearRect(0,0,W,H);
+  const PL=30,PR=8,PT=12,PB=24;
+  const cW=W-PL-PR, cH=H-PT-PB;
+  const mx=Math.max(...data,1);
+  const n=data.length;
+  const xp=i=>PL+(n<2?cW/2:i/(n-1)*cW);
+  const yp=v=>PT+cH-(v/mx)*cH;
+  // grid
+  for(let i=0;i<=4;i++){
+    const y=PT+cH-(i/4)*cH;
+    ctx.strokeStyle='#222';ctx.lineWidth=1;
+    ctx.beginPath();ctx.moveTo(PL,y);ctx.lineTo(W-PR,y);ctx.stroke();
+    ctx.fillStyle='#555';ctx.font='9px sans-serif';ctx.textAlign='right';
+    ctx.fillText(Math.round(mx*i/4),PL-3,y+3);
+  }
+  // x labels
+  ctx.fillStyle='#555';ctx.font='9px sans-serif';ctx.textAlign='center';
+  const ev=Math.ceil(n/8);
+  labels.forEach((l,i)=>{if(i%ev!==0&&i!==n-1)return;ctx.fillText(l,xp(i),H-4);});
+  // fill
+  const gr=ctx.createLinearGradient(0,PT,0,PT+cH);
+  gr.addColorStop(0,'rgba(255,0,0,0.25)');gr.addColorStop(1,'rgba(0,0,0,0)');
+  ctx.beginPath();
+  data.forEach((v,i)=>i===0?ctx.moveTo(xp(i),yp(v)):ctx.lineTo(xp(i),yp(v)));
+  ctx.lineTo(xp(n-1),PT+cH);ctx.lineTo(xp(0),PT+cH);ctx.closePath();
+  ctx.fillStyle=gr;ctx.fill();
+  // line
+  ctx.beginPath();ctx.strokeStyle=color;ctx.lineWidth=2;
+  data.forEach((v,i)=>i===0?ctx.moveTo(xp(i),yp(v)):ctx.lineTo(xp(i),yp(v)));
+  ctx.stroke();
+  // dots
+  ctx.fillStyle=color;
+  data.forEach((v,i)=>{ctx.beginPath();ctx.arc(xp(i),yp(v),2.5,0,Math.PI*2);ctx.fill();});
+}
+
+function drawDonutChart(canvasId, slices){
+  const cv=document.getElementById(canvasId);
+  if(!cv)return;
+  const S=Math.min(cv.width,cv.height)||150;
+  cv.width=S;cv.height=S;
+  cv.style.height=S+'px';
+  const ctx=cv.getContext('2d');
+  ctx.clearRect(0,0,S,S);
+  const total=slices.reduce((s,sl)=>s+sl.value,0)||1;
+  const cx=S/2,cy=S/2,outer=S*0.44,inner=S*0.26;
+  let angle=-Math.PI/2;
+  slices.forEach(sl=>{
+    if(!sl.value)return;
+    const sweep=(sl.value/total)*Math.PI*2;
+    ctx.beginPath();ctx.moveTo(cx,cy);
+    ctx.arc(cx,cy,outer,angle,angle+sweep);
+    ctx.closePath();ctx.fillStyle=sl.color;ctx.fill();
+    angle+=sweep;
+  });
+  ctx.beginPath();ctx.arc(cx,cy,inner,0,Math.PI*2);
+  ctx.fillStyle='#111';ctx.fill();
+  if(slices.every(s=>!s.value)){
+    ctx.fillStyle='#444';ctx.font='11px sans-serif';ctx.textAlign='center';
+    ctx.fillText('No data',cx,cy+4);
+  }
+}
+
+function renderStats(){
+  if(!DB||!DB.analytics){
+    document.getElementById('statsKpis').innerHTML='<div style="color:var(--cr-muted);font-size:.85rem;grid-column:1/-1;padding:2rem;text-align:center;">No analytics data yet. Visit the public site to start tracking.</div>';
+    return;
+  }
+  const a=DB.analytics;
+  const days=parseInt(document.getElementById('statsDays')?.value||30);
+  const today=new Date();
+  const dateKeys=[];
+  for(let i=days-1;i>=0;i--){const d=new Date(today);d.setDate(d.getDate()-i);dateKeys.push(d.toISOString().slice(0,10));}
+  let rangeViews=0,rangeUnique=0;
+  const dailyViews=[],dailyUnique=[];
+  dateKeys.forEach(dk=>{
+    const day=(a.daily&&a.daily[dk])||{views:0,unique:0};
+    rangeViews+=day.views||0;rangeUnique+=day.unique||0;
+    dailyViews.push(day.views||0);dailyUnique.push(day.unique||0);
+  });
+  const totalViews=a.totalViews||0,totalUnique=a.totalUnique||0;
+  const avgDaily=days>0?Math.round(rangeViews/days):0;
+  const devices=a.devices||{desktop:0,mobile:0,tablet:0};
+  const totalDev=Object.values(devices).reduce((s,v)=>s+v,0)||1;
+
+  // KPI cards
+  const kpis=[
+    {label:'Total Views',val:totalViews,icon:'👁',color:'#ff0000'},
+    {label:'Unique Visitors',val:totalUnique,icon:'👤',color:'#ff6600'},
+    {label:'Views ('+days+'d)',val:rangeViews,icon:'📈',color:'#ff3333'},
+    {label:'Unique ('+days+'d)',val:rangeUnique,icon:'🆕',color:'#ff9900'},
+    {label:'Avg/Day',val:avgDaily,icon:'📅',color:'#cc0000'},
+    {label:'Articles',val:(DB.articles||[]).length,icon:'📰',color:'#888'},
+  ];
+  document.getElementById('statsKpis').innerHTML=kpis.map(k=>
+    '<div class="panel" style="text-align:center;padding:1rem;">'+
+    '<div style="font-size:1.4rem;margin-bottom:.25rem;">'+k.icon+'</div>'+
+    '<div style="font-family:Orbitron,monospace;font-size:1.4rem;font-weight:900;color:'+k.color+';">'+k.val.toLocaleString()+'</div>'+
+    '<div style="font-size:.68rem;color:var(--cr-muted);margin-top:.25rem;font-family:Orbitron,monospace;letter-spacing:1px;">'+k.label+'</div>'+
+    '</div>'
+  ).join('');
+
+  const shortLabels=dateKeys.map(d=>{const p=d.split('-');return p[2]+'/'+p[1];});
+  drawBarChart('chartDaily',shortLabels,[
+    {data:dailyViews,color:'rgba(255,0,0,0.75)'},
+    {data:dailyUnique,color:'rgba(255,120,0,0.75)'}
+  ],['Views','Unique']);
+  drawLineChart('chartHourly',Array.from({length:24},(_,i)=>i+'h'),a.hourly||Array(24).fill(0),'#ff0000');
+
+  const devSlices=[
+    {label:'Desktop',value:devices.desktop||0,color:'#ff0000'},
+    {label:'Mobile',value:devices.mobile||0,color:'#ff6600'},
+    {label:'Tablet',value:devices.tablet||0,color:'#ff9900'},
+  ];
+  drawDonutChart('chartDevices',devSlices);
+  document.getElementById('deviceLegend').innerHTML=devSlices.map(sl=>{
+    const icons={Desktop:'🖥',Mobile:'📱',Tablet:'📟'};
+    return '<div style="display:flex;justify-content:space-between;margin-bottom:4px;"><span style="color:'+sl.color+'">'+icons[sl.label]+' '+sl.label+'</span><span style="font-weight:700;">'+Math.round(sl.value/totalDev*100)+'%</span></div>';
+  }).join('');
+
+  const sources=a.sources||{};
+  const srcColors=['#ff0000','#ff4400','#ff6600','#ff8800','#ffaa00','#ffcc00'];
+  const srcIcons={direct:'🔗',search:'🔍',youtube:'▶',twitter:'🐦',facebook:'👥',referral:'↩'};
+  const srcKeys=Object.keys(sources).filter(k=>sources[k]>0);
+  const srcSlices=srcKeys.map((k,i)=>({label:k,value:sources[k],color:srcColors[i%srcColors.length]}));
+  drawDonutChart('chartSources',srcSlices);
+  const totalSrc=srcSlices.reduce((s,sl)=>s+sl.value,0)||1;
+  document.getElementById('sourceLegend').innerHTML=srcSlices.map(sl=>{
+    const n=sl.label.charAt(0).toUpperCase()+sl.label.slice(1);
+    return '<div style="display:flex;justify-content:space-between;margin-bottom:4px;"><span style="color:'+sl.color+'">'+(srcIcons[sl.label]||'•')+' '+n+'</span><span style="font-weight:700;">'+Math.round(sl.value/totalSrc*100)+'%</span></div>';
+  }).join('');
+
+  const topArt=a.topArticles||{},articles=DB.articles||[];
+  const sorted=Object.entries(topArt).sort((a,b)=>b[1]-a[1]).slice(0,6);
+  const maxC=sorted.length?sorted[0][1]:1;
+  document.getElementById('topArticlesStats').innerHTML=sorted.length?sorted.map(function(entry){
+    const id=entry[0],clicks=entry[1];
+    const art=articles.find(x=>x.id===id);
+    const title=art?(art.title.length>28?art.title.slice(0,28)+'…':art.title):'Unknown';
+    const pct=Math.round(clicks/maxC*100);
+    return '<div style="margin-bottom:.65rem;"><div style="display:flex;justify-content:space-between;margin-bottom:3px;font-size:.75rem;"><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:72%;">'+esc(title)+'</span><span style="color:var(--cr-red);font-weight:700;">'+clicks+'</span></div><div style="background:var(--cr-border);border-radius:3px;height:4px;"><div style="background:var(--cr-red);width:'+pct+'%;height:4px;border-radius:3px;"></div></div></div>';
+  }).join(''):'<div style="color:var(--cr-muted);font-size:.8rem;padding:.5rem 0;">No clicks tracked yet.</div>';
+}
+
 ['articleModal','adModal','adminModal'].forEach(id=>{document.getElementById(id).addEventListener('click',e=>{if(e.target===document.getElementById(id))closeModal(id);});});
 </script>
 </body>
