@@ -255,6 +255,31 @@
 
         <button class="btn-red" id="saveSettingsBtn" onclick="saveSettings()">Save Changes</button>
       </div>
+
+      <div class="panel" style="max-width:500px;margin-top:1.5rem;">
+        <div style="font-family:'Orbitron',monospace;font-size:.8rem;color:var(--cr-red);letter-spacing:1px;margin-bottom:.75rem;">📊 ANALYTICS TOKEN</div>
+        <p style="font-size:.8rem;color:var(--cr-muted);margin-bottom:1rem;line-height:1.6;">
+          Create a <strong style="color:var(--cr-text);">GitHub Fine-Grained PAT</strong> with only <strong style="color:var(--cr-text);">Gist → Read & Write</strong> permission. Paste it below — it will be saved to <code style="background:#1a1a1a;padding:1px 5px;border-radius:3px;">site-config.json</code> so <strong style="color:var(--cr-text);">all visitors</strong> can be tracked, not just admins.
+        </p>
+        <div class="info-box" style="font-size:.75rem;margin-bottom:1rem;">
+          ⚠️ This token is publicly readable (it's in site-config.json). Use a <strong>fine-grained PAT scoped only to Gist</strong> — it cannot access your repos, account, or any private data.
+          <br/><br/>
+          Create one at: <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" style="color:var(--cr-red);">github.com/settings/personal-access-tokens/new</a><br/>
+          → Resource owner: your account → Repository access: None → Permissions: <strong>Gist → Read and write</strong>
+        </div>
+        <div class="field">
+          <label style="display:flex;justify-content:space-between;">
+            Analytics Token
+            <span id="analyticsTokenStatus" style="font-size:.7rem;"></span>
+          </label>
+          <input type="password" id="analyticsTokenInput" placeholder="github_pat_xxxxxxxxxxxx" />
+        </div>
+        <div style="display:flex;gap:.5rem;">
+          <button class="btn-red" onclick="saveAnalyticsToken()">Save Analytics Token</button>
+          <button class="btn-ghost" onclick="clearAnalyticsToken()" style="font-size:.75rem;">Clear</button>
+        </div>
+      </div>
+    </div>
     </div>
   </div>
 </div>
@@ -555,6 +580,75 @@ document.getElementById('loginUsername').addEventListener('keydown',e=>{if(e.key
 })();
 function doLogout(){clearSession();location.reload();}
 
+async function saveAnalyticsToken(){
+  const btn=event.target;btn.textContent='Saving...';btn.disabled=true;
+  const t=(document.getElementById('analyticsTokenInput').value||'').trim();
+  const status=document.getElementById('analyticsTokenStatus');
+  if(!t){
+    status.textContent='Enter a token first';status.style.color='#ff4444';
+    btn.textContent='Save Analytics Token';btn.disabled=false;return;
+  }
+  // Validate the token works by trying a gist read
+  try{
+    const gistId=await getGistId();
+    if(!gistId){status.textContent='No Gist ID found';status.style.color='#ff4444';btn.textContent='Save Analytics Token';btn.disabled=false;return;}
+    const test=await fetch('https://api.github.com/gists/'+gistId,{headers:{'Authorization':'token '+t,'Accept':'application/vnd.github.v3+json'}});
+    if(!test.ok){status.textContent='Token invalid or no Gist access';status.style.color='#ff4444';btn.textContent='Save Analytics Token';btn.disabled=false;return;}
+    // Save to site-config.json via repo API
+    const adminToken=getToken();
+    const cfg=getLocalCfg();
+    if(!adminToken||!cfg||!cfg.repoOwner||!cfg.repoName){
+      // No repo configured — save locally only with note
+      localStorage.setItem('cr_analytics_token',t);
+      status.textContent="⚠ Saved locally only (no repo configured). Visitors cannot be tracked until you deploy site-config.json.";
+      status.style.color='#ff9900';btn.textContent='Save Analytics Token';btn.disabled=false;return;
+    }
+    // Read current site-config.json
+    const repoOwner=cfg.repoOwner,repoName=cfg.repoName;
+    let sha=null;
+    const get=await fetch('https://api.github.com/repos/'+repoOwner+'/'+repoName+'/contents/site-config.json',{headers:{'Authorization':'token '+adminToken,'Accept':'application/vnd.github.v3+json'}});
+    let currentConfig={gistId};
+    if(get.ok){const gd=await get.json();sha=gd.sha;try{currentConfig=JSON.parse(atob(gd.content.replace(/\n/g,'')));}catch(e){}}
+    currentConfig.analyticsToken=t;
+    const content=btoa(unescape(encodeURIComponent(JSON.stringify(currentConfig,null,2))));
+    const body={message:'chore: add analytics token',content};
+    if(sha)body.sha=sha;
+    const put=await fetch('https://api.github.com/repos/'+repoOwner+'/'+repoName+'/contents/site-config.json',{method:'PUT',headers:{'Authorization':'token '+adminToken,'Accept':'application/vnd.github.v3+json','Content-Type':'application/json'},body:JSON.stringify(body)});
+    if(put.ok){
+      status.textContent='✔ Saved to site-config.json — all visitors will now be tracked!';
+      status.style.color='#00cc44';
+      document.getElementById('analyticsTokenInput').value='';
+    } else {
+      status.textContent='Failed to write site-config.json (check admin token permissions)';status.style.color='#ff4444';
+    }
+  }catch(e){
+    status.textContent='Error: '+e.message;status.style.color='#ff4444';
+  }
+  btn.textContent='Save Analytics Token';btn.disabled=false;
+}
+
+async function clearAnalyticsToken(){
+  const status=document.getElementById('analyticsTokenStatus');
+  const adminToken=getToken();
+  const cfg=getLocalCfg();
+  if(!adminToken||!cfg||!cfg.repoOwner||!cfg.repoName){
+    localStorage.removeItem('cr_analytics_token');
+    status.textContent='Cleared locally';status.style.color='#888';return;
+  }
+  try{
+    const repoOwner=cfg.repoOwner,repoName=cfg.repoName;
+    const get=await fetch('https://api.github.com/repos/'+repoOwner+'/'+repoName+'/contents/site-config.json',{headers:{'Authorization':'token '+adminToken,'Accept':'application/vnd.github.v3+json'}});
+    if(!get.ok){status.textContent='Could not read site-config.json';status.style.color='#ff4444';return;}
+    const gd=await get.json();
+    let currentConfig={};
+    try{currentConfig=JSON.parse(atob(gd.content.replace(/\n/g,'')));}catch(e){}
+    delete currentConfig.analyticsToken;
+    const content=btoa(unescape(encodeURIComponent(JSON.stringify(currentConfig,null,2))));
+    await fetch('https://api.github.com/repos/'+repoOwner+'/'+repoName+'/contents/site-config.json',{method:'PUT',headers:{'Authorization':'token '+adminToken,'Accept':'application/vnd.github.v3+json','Content-Type':'application/json'},body:JSON.stringify({message:'chore: remove analytics token',content,sha:gd.sha})});
+    status.textContent='Analytics token removed';status.style.color='#888';
+  }catch(e){status.textContent='Error: '+e.message;status.style.color='#ff4444';}
+}
+
 async function saveInlineToken(){
   const t=(document.getElementById('inlineToken').value||'').trim();
   if(!t){showToast('Enter your GitHub token first.','error');return;}
@@ -589,6 +683,21 @@ async function showDashboard(){
     }
   }
   await syncFromGist(false);
+
+  // Load analytics token status
+  (async function(){
+    try{
+      const r=await fetch('site-config.json?t='+Date.now(),{cache:'no-store'});
+      if(r.ok){
+        const d=await r.json();
+        const status=document.getElementById('analyticsTokenStatus');
+        if(status){
+          if(d.analyticsToken){status.textContent='✔ Token active — all visitors tracked';status.style.color='#00cc44';}
+          else{status.textContent='Not set — only admin visits tracked';status.style.color='#ff9900';}
+        }
+      }
+    }catch(e){}
+  })();
 
   // Load saved shortcut
   const savedShortcut = localStorage.getItem('cr_admin_shortcut') || 'ctrl+alt+a';

@@ -397,11 +397,32 @@ function renderBottom(list){
 }
 
 // ══════ ANALYTICS ══════
-// Safe: only writes if token available; always fetches fresh data first to prevent overwriting
-async function safeGistPatch(updateFn){
+// Uses analyticsToken from site-config.json — set by admin, readable by all visitors.
+// This is a Gist-only fine-grained PAT: safe to expose (can only write to one Gist).
+
+let _analyticsToken = null;
+
+async function getAnalyticsToken(){
+  if(_analyticsToken)return _analyticsToken;
+  // First check localStorage (admin's full token works too)
   try{
     const cfg=JSON.parse(localStorage.getItem('cr_gist_config')||'null');
-    const token=cfg&&cfg.token;
+    if(cfg&&cfg.token){_analyticsToken=cfg.token;return _analyticsToken;}
+  }catch(e){}
+  // Then load from site-config.json (public analytics-only token)
+  try{
+    const r=await fetch('site-config.json?t='+Date.now(),{cache:'no-store'});
+    if(r.ok){
+      const d=await r.json();
+      if(d&&d.analyticsToken){_analyticsToken=d.analyticsToken;return _analyticsToken;}
+    }
+  }catch(e){}
+  return null;
+}
+
+async function safeGistPatch(updateFn){
+  try{
+    const token=await getAnalyticsToken();
     if(!token)return;
     const gistId=await getGistId();
     if(!gistId)return;
@@ -412,7 +433,11 @@ async function safeGistPatch(updateFn){
     const raw=(gistData.files&&gistData.files['cr-data.json'])?gistData.files['cr-data.json'].content:'{}';
     const db=JSON.parse(raw);
     updateFn(db);
-    await fetch('https://api.github.com/gists/'+gistId,{method:'PATCH',headers:{...headers,'Content-Type':'application/json'},body:JSON.stringify({files:{'cr-data.json':{content:JSON.stringify(db)}}})});
+    await fetch('https://api.github.com/gists/'+gistId,{
+      method:'PATCH',
+      headers:{...headers,'Content-Type':'application/json'},
+      body:JSON.stringify({files:{'cr-data.json':{content:JSON.stringify(db)}}})
+    });
   }catch(e){/* silent */}
 }
 
@@ -424,7 +449,7 @@ function safeTrackClick(articleId){
   }),2000);
 }
 
-// Page visit tracking — runs 5s after load to avoid racing with loadData()
+// Page visit tracking — 5s delay so loadData() finishes first
 setTimeout(()=>safeGistPatch(db=>{
   const ua=navigator.userAgent;
   let device='desktop';
