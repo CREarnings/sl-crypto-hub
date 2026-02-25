@@ -257,6 +257,17 @@
       </div>
 
       <div class="panel" style="max-width:500px;margin-top:1.5rem;">
+        <div style="font-family:'Orbitron',monospace;font-size:.8rem;color:var(--cr-red);letter-spacing:1px;margin-bottom:.75rem;">🔗 REPO SETTINGS</div>
+        <p style="font-size:.8rem;color:var(--cr-muted);margin-bottom:1rem;">Required for saving analytics token to <code style="background:#1a1a1a;padding:1px 5px;border-radius:3px;">site-config.json</code>. These should match your GitHub repo.</p>
+        <div class="field"><label>GitHub Username (Repo Owner)</label><input type="text" id="repoOwnerInput" placeholder="e.g. theshanbmr" /></div>
+        <div class="field"><label>Repo Name</label><input type="text" id="repoNameInput" placeholder="e.g. cr-earnings" /></div>
+        <div style="display:flex;gap:.5rem;align-items:center;">
+          <button class="btn-red" onclick="saveRepoSettings()">Save Repo Settings</button>
+          <span id="repoSettingsStatus" style="font-size:.75rem;"></span>
+        </div>
+      </div>
+
+      <div class="panel" style="max-width:500px;margin-top:1.5rem;">
         <div style="font-family:'Orbitron',monospace;font-size:.8rem;color:var(--cr-red);letter-spacing:1px;margin-bottom:.75rem;">📊 ANALYTICS TOKEN</div>
         <p style="font-size:.8rem;color:var(--cr-muted);margin-bottom:1rem;line-height:1.6;">
           Create a <strong style="color:var(--cr-text);">GitHub Fine-Grained PAT</strong> with only <strong style="color:var(--cr-text);">Gist → Read & Write</strong> permission. Paste it below — it will be saved to <code style="background:#1a1a1a;padding:1px 5px;border-radius:3px;">site-config.json</code> so <strong style="color:var(--cr-text);">all visitors</strong> can be tracked, not just admins.
@@ -501,7 +512,7 @@ async function doSetup(){
 
   const btn=document.getElementById('setupBtn');btn.innerHTML='Setting up...<span class="spinner"></span>';btn.disabled=true;
 
-  saveLocalCfg({gistId,token});
+  saveLocalCfg({gistId,token,repoOwner:owner,repoName:repo});
   _cachedGistId=gistId;
 
   const existing=await fetchGist();
@@ -545,7 +556,7 @@ async function doLogin(){
   // Always try to save token if entered; also get gistId from site-config.json if not in localStorage
   if(enteredToken){
     const gId=await getGistId();
-    if(gId){saveLocalCfg({gistId:gId,token:enteredToken});}
+    if(gId){const ex=getLocalCfg()||{};saveLocalCfg(Object.assign({},ex,{gistId:gId,token:enteredToken}));}
     else{
       // gistId not found anywhere yet – store token temporarily; it will merge after fetchGist resolves gistId
       const existing=getLocalCfg();
@@ -580,6 +591,16 @@ document.getElementById('loginUsername').addEventListener('keydown',e=>{if(e.key
 })();
 function doLogout(){clearSession();location.reload();}
 
+function saveRepoSettings(){
+  const owner=(document.getElementById('repoOwnerInput').value||'').trim();
+  const repo=(document.getElementById('repoNameInput').value||'').trim();
+  const status=document.getElementById('repoSettingsStatus');
+  if(!owner||!repo){status.textContent='⚠ Enter both fields';status.style.color='#ff9900';return;}
+  const existing=getLocalCfg()||{};
+  saveLocalCfg(Object.assign({},existing,{repoOwner:owner,repoName:repo}));
+  status.textContent='✔ Saved!';status.style.color='#00cc44';
+  setTimeout(()=>status.textContent='',3000);
+}
 async function saveAnalyticsToken(){
   const btn=event.target;btn.textContent='Saving...';btn.disabled=true;
   const t=(document.getElementById('analyticsTokenInput').value||'').trim();
@@ -713,6 +734,11 @@ function switchTab(tab){
   if(tab==='ads')renderAllAdLists();
   if(tab==='admins')renderAdminsList();
   if(tab==='stats')renderStats();
+  if(tab==='settings'){
+    const cfg=getLocalCfg();
+    if(cfg&&cfg.repoOwner)document.getElementById('repoOwnerInput').value=cfg.repoOwner;
+    if(cfg&&cfg.repoName)document.getElementById('repoNameInput').value=cfg.repoName;
+  }
 }
 
 // ══════ ARTICLES ══════
