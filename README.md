@@ -7,6 +7,7 @@ Sri Lanka's #1 crypto airdrop tracking site. Built with pure HTML/CSS/JS — no 
 ## 🗂️ Files
 
 ```
+
 cr-earnings/
 ├── assets/           # Site logo - visitors see favicon from here
 |   └── icon.ico      # Site icon
@@ -14,6 +15,7 @@ cr-earnings/
 ├── admin.html        # Admin panel – only for authorized admins
 ├── site-config.json  # Auto-generated on setup – stores Gist ID (DO NOT edit manually)
 └── README.md
+
 ```
 
 ---
@@ -22,18 +24,20 @@ cr-earnings/
 
 ### Step 1 – Create a GitHub Gist (the database)
 
-1. Go to [gist.github.com](https://gist.github.com)
+1. Go to gist.github.com
 2. Create a **New secret gist**
 3. Filename: `cr-data.json` — Content: `{}`
 4. Click **Create secret gist**
 5. Copy the **Gist ID** from the URL — it's the long alphanumeric code after your username:
-   ```
-   https://gist.github.com/yourusername/THIS-IS-THE-GIST-ID
-   ```
+```
+
+[https://gist.github.com/yourusername/THIS-IS-THE-GIST-ID](https://gist.github.com/yourusername/THIS-IS-THE-GIST-ID)
+
+```
 
 ### Step 2 – Create a GitHub Personal Access Token
 
-1. Go to [GitHub → Settings → Developer settings → Personal access tokens → Tokens (classic)](https://github.com/settings/tokens)
+1. Go to GitHub → Settings → Developer settings → Personal access tokens → Tokens (classic)
 2. Click **Generate new token (classic)**
 3. Give it a name (e.g. `cr-earnings`)
 4. Check these two scopes: ✅ **gist** and ✅ **repo**
@@ -44,12 +48,12 @@ cr-earnings/
 1. Push all files to your GitHub repo and enable GitHub Pages
 2. Open `admin.html` in your browser
 3. Fill in the setup form:
-   - **GitHub Gist ID** – from Step 1
-   - **GitHub Personal Access Token** – from Step 2
-   - **Your GitHub Username** – e.g. `johndoe`
-   - **Your Repo Name** – e.g. `cr-earnings`
-   - **Admin Username** – your superadmin login name
-   - **Admin Password** – choose a strong password
+- **GitHub Gist ID** – from Step 1
+- **GitHub Personal Access Token** – from Step 2
+- **Your GitHub Username** – e.g. `johndoe`
+- **Your Repo Name** – e.g. `cr-earnings`
+- **Admin Username** – your superadmin login name
+- **Admin Password** – choose a strong password
 4. Click **Complete Setup**
 
 > ✅ Setup automatically writes `site-config.json` to your repo so every visitor can find the database — no extra steps needed.
@@ -88,9 +92,9 @@ From the admin panel → **Articles** tab:
 - **Edit** – update any existing article
 - **Del** – permanently delete an article
 - **Status options:**
-  - `Published` — visible to all visitors immediately
-  - `Draft` — hidden from public, only visible in admin panel
-  - `Scheduled` — auto-publishes at a set date and time
+- `Published` — visible to all visitors immediately
+- `Draft` — hidden from public, only visible in admin panel
+- `Scheduled` — auto-publishes at a set date and time
 
 All changes sync to the Gist database instantly and appear on the public site for all visitors.
 
@@ -117,14 +121,16 @@ From the admin panel → **Settings** tab, any admin can change their own userna
 ## 🌐 How the Public Site Works
 
 ```
+
 Visitor opens index.html
-       ↓
+↓
 Fetches site-config.json from the repo (contains Gist ID)
-       ↓
+↓
 Fetches cr-data.json from GitHub Gist API (public read, no token needed)
-       ↓
+↓
 Renders all published articles as cards
-```
+
+````
 
 The public site auto-refreshes every 5 minutes so scheduled articles appear on time.
 
@@ -147,7 +153,7 @@ The key file is `site-config.json` — it's written to the repo during setup and
 
 ```json
 { "gistId": "your-gist-id-here" }
-```
+````
 
 Every browser fetches this file to discover the Gist ID, then reads the Gist directly. Since the Gist is public-readable, **any visitor on any device worldwide** sees the same data without needing any account or login.
 
@@ -158,22 +164,26 @@ The GitHub token is **only stored locally** on the admin's browser — it is nev
 ## ❓ Troubleshooting
 
 **Articles not showing on the public site**
-- Make sure setup completed successfully and `site-config.json` exists in your repo
-- Check that your GitHub token had both `gist` and `repo` scopes during setup
-- Wait 1–2 minutes after setup for GitHub Pages to update
+
+* Make sure setup completed successfully and `site-config.json` exists in your repo
+* Check that your GitHub token had both `gist` and `repo` scopes during setup
+* Wait 1–2 minutes after setup for GitHub Pages to update
 
 **"Cannot reach database" on login**
-- Your Gist ID is correct but the Gist file (`cr-data.json`) may have been deleted — create a new Gist and re-run setup
-- Check your internet connection
+
+* Your Gist ID is correct but the Gist file (`cr-data.json`) may have been deleted — create a new Gist and re-run setup
+* Check your internet connection
 
 **Admin from another device can't write articles**
-- They need to enter the GitHub token when logging in — click "New device? Enter token" on the login screen
+
+* They need to enter the GitHub token when logging in — click "New device? Enter token" on the login screen
 
 **Setup says "This Gist already has admins"**
-- The Gist is already configured. Go to the login screen instead of running setup again.
+
+* The Gist is already configured. Go to the login screen instead of running setup again.
 
 ---
 
 ## 📄 License
-
-MIT — free to use and modify.
+© CR Earnings. All rights reserved.  
+See the [`LICENSE`](LICENSE) file.
