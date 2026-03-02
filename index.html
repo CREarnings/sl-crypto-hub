@@ -245,7 +245,7 @@
       </div>
     </div>
     <div class="footer-bottom">
-      <p>© 2026 CR Earnings. Built for the Sri Lankan Crypto Community 🇱🇰</p>
+      <p>© <span id="year"></span> CR Earnings. Built for the Sri Lankan Crypto Community 🇱🇰</p>
       <p style="margin-top:4px;font-size:.65rem;">Crypto involves risk. DYOR. Not financial advice.</p>
     </div>
   </footer>
@@ -264,6 +264,8 @@
 </div>
 
 <script>
+// ══════ YEAR CHANGING ══════
+document.getElementById("year").textContent = new Date().getFullYear();
 // ══════ MOBILE NAV ══════
 function toggleMobileNav(){
   const nav=document.getElementById('mobileNav');
