@@ -189,8 +189,9 @@ The GitHub token is **only stored locally** on the admin's browser — it is nev
 <details>
   <summary>View license</summary>
   
-  Copyright (c) 2026 CR Earnings
   ```
+  Copyright (c) 2026 CR Earnings
+  
   All rights reserved.
   
   No permission is granted to use, copy, modify, merge, publish, distribute, sublicense,
