@@ -1,4 +1,4 @@
-# CR Earnings – Crypto Airdrop Hub 🇱🇰
+# CR Earnings – Crypto Hub 🇱🇰
 
 Sri Lanka's #1 crypto airdrop tracking site. Built with pure HTML/CSS/JS — no server, no backend, hosted free on GitHub Pages. Uses a **GitHub Gist as a database** so all visitors worldwide see the same articles in real time.
 
